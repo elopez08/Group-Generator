@@ -51,7 +51,7 @@ function runApp () {
             {
                 type: "input",
                 name: "managerName",
-                message: "What is the manager's name?",
+                message: "What is the manager's name? (HINT:  Can you bypass this with any character?)",
                 validate: nameinput => {
                     if(nameinput)
                     {
@@ -69,8 +69,8 @@ function runApp () {
                 name: "managerID",
                 message: "What is the manager's ID?",
                 validate(idnumber) {
-                    idRegex = /^[$]?\d{7}[\d{7},]*$/
-                    if(!idRegex.test(idnumber))
+                    manageridRegex = /^[$]?\d{7}[\d{7},]*$/
+                    if(!manageridRegex.test(idnumber))
                     {
                         return `Not a valid ID Number.  Please type in a 7 digit ID number for the manager.`;
                     }
@@ -85,15 +85,15 @@ function runApp () {
                 type: "input",
                 name: "managerEmail",
                 message: "What is the manager's email address?",
-                validate: emailinput => {
-                    if(emailinput)
+                validate(manageremail) {
+                    emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+                    if(!emailRegex.test(manageremail))
                     {
-                        return true;
+                        return `Not a valid email.  Please type in a valid email address.`;
                     }
                     else
                     {
-                        console.log(`Type in the intern's school name!`);
-                        return false;
+                        return true;
                     }
                 }
             },
@@ -105,7 +105,7 @@ function runApp () {
                     officenumberRegex = /^[$]?\d{2}[\d{2},]*$/
                     if(!officenumberRegex.test(officenumber))
                     {
-                        return `Not a valid number.  Please type in a room number for the manager.`;
+                        return `Not a valid number.  Please type in a room number for the manager (this requires a 2 digit number).`;
                     }
                     else
                     {
@@ -115,7 +115,7 @@ function runApp () {
             }
             
         ]).then(answers => {
-            const manager = new Manager(answers.managerName, answers.managerId, answers.managerEmail, answers.managerOfficeNumber);
+            const manager = new Manager(answers.managerName, answers.managerID, answers.managerEmail, answers.managerOfficeNumber);
             //Pushed to an empty array that has a push of 'manager'.  If we look at the other file, we see that it has three functions.  If this is matching that speccific function, then that means it'll go to that property instead
             teamArray.push(manager);
             //Returning the sender back to the beginning
@@ -124,24 +124,25 @@ function runApp () {
     }
     
     //I am prompted to enter the engineer’s name, ID, email, and GitHub username, and I am taken back to the menu
+    //^[a-zA-Z]{2,}+ [a-zA-Z]{2,}+$
+    //^[$]?\d{7}[\d{7},]*$
     function addEngineer () {
         inquirer.prompt([
             {
                 type: "input",
                 name: "engineerName",
                 message: "What is the engineer's name?",
-                validate: engnameinput => {
-                    if(engnameinput)
+                validate(enginame) {
+                    nameRegex = /^[a-zA-Z]{2,} [a-zA-Z]{2,}$/
+                    if(!nameRegex.test(enginame))
                     {
-                        return true;
+                        return `Not a valid name.  Please type a valid name (Need to be a First and Last name AND it must be at least 2 characters each).`;
                     }
                     else
                     {
-                        console.log(`Please type in the engineer's name! (Required)`);
-                        return false;
+                        return true;
                     }
                 }
-
             },
             {
                 type: "input",
@@ -163,7 +164,18 @@ function runApp () {
             {
                 type: "input",
                 name: "engineerEmail",
-                message: "What is the engineer's email address?"
+                message: "What is the engineer's email address?",
+                validate(engiemail) {
+                    emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+                    if(!emailRegex.test(engiemail))
+                    {
+                        return `Not a valid email.  Please type in a valid email address.`;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
             },
             {
                 type: "input",
@@ -197,16 +209,16 @@ function runApp () {
                 type: "input",
                 name: "internName",
                 message: "What is the intern's name?",
-                validate: nameinput =>
+                validate(intername) 
                 {
-                    if(nameinput)
+                    nameRegex = /^[a-zA-Z]{2,} [a-zA-Z]{2,}$/
+                    if(!nameRegex.test(intername))
                     {
-                        return true;
+                        return `Not a valid name.  Please type a valid name (Need to be a First and Last name AND it must be at least 2 characters each).`;
                     }
                     else
                     {
-                        console.log("Please type in the intern's name!");
-                        return false;
+                        return true;
                     }
                 }
             },
@@ -229,7 +241,18 @@ function runApp () {
             {
                 type: "input",
                 name: "internEmail",
-                message: "What is the intern's email address?"
+                message: "What is the intern's email address?",
+                validate(internemail) {
+                    emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
+                    if(!emailRegex.test(internemail))
+                    {
+                        return `Not a valid email.  Please type in a valid email.`;
+                    }
+                    else
+                    {
+                        return true;
+                    }
+                }
             },
             {
                 type: "input",
@@ -249,8 +272,8 @@ function runApp () {
 
             }
         ]).then(answers => {
-            const engineer = new Intern(answers.internName, answers.internID, answers.engineerEmail, answers.internSchool);
-            teamArray.push(engineer);
+            const intern = new Intern(answers.internName, answers.internID, answers.internEmail, answers.internSchool);
+            teamArray.push(intern);
             //Back to start
             createGroup();
         })
@@ -260,11 +283,9 @@ function runApp () {
         console.log(`The team has been created!`)
         fs.writeFileSync(outputPath, generateHTML(teamArray), "UTF-8")
     }
-    
 
     createGroup();
     
-
 }
 
 runApp();
